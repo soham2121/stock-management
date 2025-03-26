@@ -1,4 +1,5 @@
 import sqlite3
+import re
 
 def getConnection():
     con = sqlite3.connect('test.db')
@@ -8,7 +9,8 @@ def define():
     connection = getConnection()
     cursor = connection.cursor()
     cursor.execute("CREATE TABLE IF NOT EXISTS users(username, mail, password)")
-    #cursor.execute("CREATE TABLE IF NOT EXISTS stock(name, password)")
+    cursor.execute("CREATE TABLE IF NOT EXISTS stock(user, name, category, price, quantity, expiry)")
+    cursor.execute("CREATE TABLE IF NOT EXISTS session(username, password)")
     connection.commit()
     connection.close()
 
@@ -22,8 +24,6 @@ def checkUser(username):
         return True
     else:
         return False
-
-checkUser('somm')
 
 def checkMail(mail):
     con = getConnection()
@@ -42,9 +42,37 @@ def checkPassword(user):
     record = c.fetchone()
     return record[0]
 
+def checkPassValid(password):
+    if(len(password) < 8):
+        return False
+    elif not re.search("[a-z]", password):
+        return False
+    elif not re.search("[A-Z]", password):
+        return False
+    elif not re.search("[0-9]", password):
+        return False
+    elif ' ' in password:
+        return False
+    else:
+        return True
+
 def cleanDb():
     connection = getConnection()
     cursor = connection.cursor()
     cursor.execute("DROP TABLE users")
+    cursor.execute("DROP TABLE session")
+    cursor.execute("DROP TABLE stock")
     connection.commit()
     connection.close()
+
+def getItems(user):
+    con = getConnection()
+    cur = con.cursor()
+    cur.execute("SELECT * FROM stock where user=?", (user,))
+    record = cur.fetchall()
+    con.commit()
+    con.close()
+    return record
+
+# cleanDb()
+# define()

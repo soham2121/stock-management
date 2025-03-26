@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Add Item</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f2f9f7; /* Light green background */
+            color: #333;
+            margin: 0;
+            padding: 0;
+            text-align: center;
+        }
+
+        h2 {
+            margin-top: 50px;
+            color: #4CAF50; /* Green color */
+        }
+
+        .form-container {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            display: inline-block;
+            max-width: 400px;
+            width: 100%;
+            margin-top: 30px;
+        }
+
+        input {
+            width: 300px;
+            padding: 12px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        button {
+            background-color: #4CAF50;
+            border: none;
+            color: white;
+            padding: 15px 32px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin-top: 10px;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        a {
+            text-decoration: none;
+            color: #0066cc; /* Blue color */
+        }
+
+        .footer {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Add Item In Stock</h1>
+    
+    <form action="/AddStock" method="post" class="form-container">
+        <input type="text" placeholder="Name" name="name" required><br>
+        <input type="text" placeholder="Category" name="category" required><br>
+        <input type="text" placeholder="Price" name="price" required><br>
+        <input type="text" placeholder="Quantity" name="quantity" required><br>
+        <input type="text" placeholder="Expiry" name="expiry"><br>
+        <button type="submit">Add</button>
+    </form>
+</body>
+</html>

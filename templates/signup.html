@@ -67,14 +67,18 @@
     </style>
 </head>
 <body>
-    <h2>Signup</h2>
-    <form action="/Signup" method="post">
+    <h1>Signup</h1>
+    <form action="/Signup" method="post" class="form-container">
         {% if error %}
             <p>{{ error }}</p>
         {% endif %}
-        <input type="text" placeholder="Mail" name="mail"><br>
-        <input type="text" placeholder="Username" name="name"><br>
-        <input type="password" placeholder="Password" name="password"><br>
+        <input type="text" placeholder="Mail" name="mail" required><br>
+        <input type="text" placeholder="Username" name="name" required><br>
+        <input type="password" placeholder="Password" name="password" required><br>
+        {% if passerror %}
+            <p>Password should be atleast 8 characters long and should not contain spaces.</p>
+            <p>Password should atleast contain one lowercase, one uppercase and a number.</p>
+        {% endif %}
         <input type="password" placeholder="Confirm Password" name="confirmPassword"><br>
         <button type="submit">Signup</button>
     </form>
