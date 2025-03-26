@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request, redirect
-from functions import getConnection, define, checkUser, checkMail
+from functions import getConnection, define, checkUser, checkMail, checkPassword
 
 app = Flask(__name__)
 
@@ -29,13 +29,28 @@ def signup():
             cursor.execute("INSERT INTO users (username, mail, password) VALUES (?, ?, ?)", (username, mail, password))
             connection.commit()
             connection.close()
-            return redirect('/Login')
+            return redirect('/List')
 
     return render_template("signup.html")
 
-@app.route("/Login")
+@app.route("/Login", methods = ['GET', 'POST'])
 def login():
+    if request.method == 'POST':
+        username = str(request.form['name'])
+        password = str(request.form['password'])
+        check = checkPassword(username)
+
+        if(checkUser(username) == 0):
+            return render_template("login.html", error = "User is invalid")
+        elif(password == check):
+            return redirect('/List')
+        else:
+            return render_template("login.html", error = "Password is incorrect")
     return render_template("login.html")
+
+@app.route("/List")
+def List():
+    return render_template("stockList.html")
 
 define()
 

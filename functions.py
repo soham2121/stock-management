@@ -17,10 +17,13 @@ def checkUser(username):
     c = con.cursor()
     c.execute("SELECT EXISTS(SELECT 1 FROM users WHERE username=? LIMIT 1)", (username,))
     record = c.fetchone()
+    print(record)
     if(record[0] == 1):
         return True
     else:
         return False
+
+checkUser('somm')
 
 def checkMail(mail):
     con = getConnection()
@@ -31,6 +34,13 @@ def checkMail(mail):
         return True
     else:
         return False
+    
+def checkPassword(user):
+    con = getConnection()
+    c = con.cursor()
+    c.execute("SELECT password FROM users where username=?", (user,))
+    record = c.fetchone()
+    return record[0]
 
 def cleanDb():
     connection = getConnection()
