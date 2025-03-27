@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request, redirect, url_for
-from functions import getConnection, define, checkUser, checkMail, checkPassword, checkPassValid, getItems
+from functions import getConnection, define, checkUser, checkMail, checkPassword, checkPassValid, getItems, makeId, getItem
 
 app = Flask(__name__)
 currentUser = None
@@ -51,7 +51,7 @@ def signup():
             cursor.execute("INSERT INTO session (username, password) VALUES (?, ?)", (username, password))
             connection.commit()
             connection.close()
-            return redirect('/List')
+            return redirect('/GetLogininfo')
 
     return render_template("signup.html")
 
@@ -79,26 +79,31 @@ def login():
                 cursor.execute("INSERT INTO session (username, password) VALUES (?, ?)", (username, password))
                 connection.commit()
                 connection.close()
-                return redirect('/List')
+                return redirect('/GetLogininfo')
             else:
                 return render_template("login.html", error = "Password is incorrect")
     else:
         connection.commit()
         connection.close()
-        return redirect('/List')
+        return redirect('/GetLogininfo')
     return render_template("login.html")
 
-@app.route("/List", methods = ['GET', 'POST'])
-def list():
+@app.route("/GetLogininfo", methods = ['GET', 'POST'])
+def getUserInfo():
     global currentUser
     connection = getConnection()
     cursor = connection.cursor()
     cursor.execute("SELECT * FROM session")
     record = cursor.fetchall()
     currentUser = record[0][0]
-    items = getItems(currentUser)
     connection.commit()
     connection.close()
+    return redirect('/List')
+
+@app.route("/List", methods = ['GET', 'POST'])
+def list():
+    global currentUser
+    items = getItems(currentUser)
     return render_template("stockList.html", username = currentUser, items = items)
 
 @app.route("/AddStock", methods = ['GET', 'POST'])
@@ -110,18 +115,45 @@ def addStock():
         price = str(request.form['price'])
         quantity = str(request.form['quantity'])
         expiry = str(request.form['expiry'])
+        id = makeId()
         if(expiry == ''):
             expiry = "~"
-
         connection = getConnection()
         cursor = connection.cursor()
-        cursor.execute("INSERT INTO stock VALUES (?, ?, ?, ?, ?, ?)", (currentUser, name, category, price, quantity, expiry))
+        cursor.execute("INSERT INTO stock VALUES (?, ?, ?, ?, ?, ?, ?)", (id, currentUser, name, category, price, quantity, expiry))
         connection.commit()
         connection.close()
 
         return redirect('/List')
     
     return render_template("addStock.html")
+
+@app.route("/UpdateStock/<int:itemId>", methods = ['GET', 'POST'])
+def updateStock(itemId):
+    item = getItem(itemId)
+    if request.method == 'POST':
+        name = str(request.form['name'])
+        category = str(request.form['category'])
+        price = str(request.form['price'])
+        quantity = str(request.form['quantity'])
+        expiry = str(request.form['expiry'])
+        connection = getConnection()
+        cursor = connection.cursor()
+        cursor.execute("UPDATE stock SET name = ?, category = ?, price = ?, quantity = ?, expiry = ? WHERE id = ?", (name, category, price, quantity, expiry, itemId))
+        connection.commit()
+        connection.close()
+
+        return redirect('/List')
+    return render_template("updateStock.html", item = item)
+
+@app.route("/DeleteItem/<int:itemId>", methods = ['GET'])
+def deleteItem(itemId):
+    connection = getConnection()
+    cursor = connection.cursor()
+    cursor.execute("DELETE FROM stock WHERE id=?;", (itemId,))
+    connection.commit()
+    connection.close()
+    return redirect('/List')
         
 define()
 

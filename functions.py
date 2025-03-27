@@ -1,5 +1,5 @@
 import sqlite3
-import re
+import re, random
 
 def getConnection():
     con = sqlite3.connect('test.db')
@@ -9,7 +9,7 @@ def define():
     connection = getConnection()
     cursor = connection.cursor()
     cursor.execute("CREATE TABLE IF NOT EXISTS users(username, mail, password)")
-    cursor.execute("CREATE TABLE IF NOT EXISTS stock(user, name, category, price, quantity, expiry)")
+    cursor.execute("CREATE TABLE IF NOT EXISTS stock(id AUTO_INCREMENT, user, name, category, price, quantity, expiry)")
     cursor.execute("CREATE TABLE IF NOT EXISTS session(username, password)")
     connection.commit()
     connection.close()
@@ -19,7 +19,6 @@ def checkUser(username):
     c = con.cursor()
     c.execute("SELECT EXISTS(SELECT 1 FROM users WHERE username=? LIMIT 1)", (username,))
     record = c.fetchone()
-    print(record)
     if(record[0] == 1):
         return True
     else:
@@ -70,6 +69,26 @@ def getItems(user):
     cur = con.cursor()
     cur.execute("SELECT * FROM stock where user=?", (user,))
     record = cur.fetchall()
+    con.commit()
+    con.close()
+    return record
+
+def makeId():
+    con = getConnection()
+    cur = con.cursor()
+    cur.execute("SELECT * FROM stock")
+    record = cur.fetchall()
+    id = random.randint(100000, 999999)
+    for records in record:
+        if(records[0] == id):
+            id = random.randint(100000, 999999)
+    return id
+
+def getItem(id):
+    con = getConnection()
+    cur = con.cursor()
+    cur.execute("SELECT * FROM stock where id=?", (id,))
+    record = cur.fetchone()
     con.commit()
     con.close()
     return record

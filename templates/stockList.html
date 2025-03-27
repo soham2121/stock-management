@@ -69,19 +69,23 @@
             box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
             border-radius: 8px;
             overflow: hidden;
+            table-layout: auto;
         }
 
         th {
             background-color: #4CAF50;
             color: white;
             padding: 12px;
-            text-align: left;
+            text-align: center;
         }
 
         td {
             padding: 12px;
             border-bottom: 1px solid #ddd;
             text-align: left;
+            white-space: nowrap;
+            text-align: center;
+            padding: 8px;
         }
 
         .signOut {
@@ -104,7 +108,7 @@
         }
 
         .content {
-            margin-top: 80px; /* Adjust this value if needed */
+            margin-top: 80px;
             text-align: center;
         }
 
@@ -140,11 +144,19 @@
             </tr>
             {% for item in items %}
             <tr>
-                <td>{{ item[1] }}</td>
                 <td>{{ item[2] }}</td>
                 <td>{{ item[3] }}</td>
                 <td>{{ item[4] }}</td>
                 <td>{{ item[5] }}</td>
+                <td>{{ item[6] }}</td>
+                <td style="display: inline-flex; border: 0; margin-left: 0;">
+                    <form action="{{ url_for('updateStock', itemId = item[0]) }}">
+                        <button>Update Info</button>
+                    </form>
+                    <form action="{{ url_for('deleteItem', itemId = item[0]) }}" style="padding-left: 20px; margin-right: 0;">
+                        <button style="background-color: red;" onclick="return confirm('Are you sure you want to delete this item?')">Delete</button>
+                    </form>
+                </td>
             </tr>
             {% endfor %}
         </table>
